@@ -1,5 +1,6 @@
 #include "ClassTree.h"
 #include "ClassNode.h"
+#include <iostream>
 
 
 template<typename T>
@@ -51,6 +52,44 @@ void Tree<T>::insert(T data)
 	temp->setCount(i);
 	if (data > prev->getData()) prev->setRight(temp);
 	else prev->setLeft(temp);
+}
+
+template<typename T>
+void Tree<T>::deleteItem(Node<T>* temp)
+{
+	Node<T>* parent = temp->getParent(); // саздание переменной, которая будет родителем удаляемого елемента
+	if (temp->getLeft() == nullptr) { //работает, когда елемент является листком
+		if (temp->getRight() != nullptr) { // работает, когда у удаляемого елемента есть только правый наследник
+			parent->setRight(temp->getRight());
+			temp->getRight()->setParent(parent);
+		}
+		delete temp;
+		return;
+	}
+	if (temp->getRight() == nullptr) { // работает, когда есть только левый наследник
+		parent->setLeft(temp->getLeft());
+		temp->getLeft()->setParent(parent);
+		delete temp;
+		return;
+	}
+	if (temp->getData() > temp->getParent()->getData()) { // if и else аналогичны для правой и левой ветки соответственно
+		parent->setRight(temp->getLeft()); 
+		temp->getLeft()->setParent(temp->getParent());
+		if (temp->getLeft()->getRight() == nullptr) { // замена недостающего наследника правой подветкой
+			temp->getLeft()->setRight(temp->getRight());
+		}
+		else temp->getLeft()->getRight()->setRight(temp->getRight()); // происходит сдвиг правой подветки на 1 ниже
+	}
+	else {
+		parent->setLeft(temp->getRight());
+		temp->getRight()->setParent(temp->getParent());
+		if (temp->getRight()->getLeft() == nullptr) { // замена недостающего наследника левой подветкой
+			temp->getRight()->setLeft(temp->getLeft());
+		}
+		else temp->getRight()->getLeft()->setLeft(temp->getLeft()); // происходит сдвиг левой подветки на 1 ниже
+	}
+	delete temp;
+	return;
 }
 
 template<typename T>
@@ -124,12 +163,24 @@ Node<T>* Tree<T>::find(int index)
 template<typename T>
 Node<T>* Tree<T>::find(Node<T>* current, int index)
 {
+	
 	if (current == nullptr) return nullptr;
-	else {
-		if (current->getCount() == index) return current;
-		find(current->getRight(), index);
-		find(current->getLeft(), index);
-	}
+	if (current->getCount() == index) return current;
+	Node<T> *inLeft = this->find(current->getLeft(), index);
+	Node<T> *inRight = this->find(current->getRight(), index);
+	if (inLeft != nullptr) return inLeft;
+	if (inRight != nullptr) return inRight;
+	return nullptr;
+	//throw std::exception("Wrong index");
+	/*if (current != nullptr)
+	{
+		if (current->getCount() == index) {
+			return current;
+		}
+		return find(current->getRight(), index) 
+			find(current->getLeft(), index);
+	}*/
+	
 }
 
 template<typename T>
@@ -148,9 +199,8 @@ void Tree<T>::watch()
 		return;
 	}
 	int N = 0; // 
-	int iForPrintItem = 0;// количество пробелов между числами, счетчик count для печати
-	int	lengthOfOneSpace; // количество пробелов между числами
-	int	lengthOfSpaces; // сумарное количество пробелов в строке
+	int iForPrintItem = 0;// счетчик count для печати
+	int	lengthOfOneSpace, lengthOfSpaces; // количество пробелов между числами, сумарное количество пробелов в строке 
 	int a = 1; // количество елементов на 1 уровне
 	int aReply = 1;
 	int hmax = height();
@@ -164,17 +214,17 @@ void Tree<T>::watch()
 	for (int h = 0; h < hmax; h++) {
 		lengthOfSpaces = length - aReply * 2;
 		lengthOfOneSpace = lengthOfSpaces / (aReply + 1);
-		int k; // для поочередного вывода, при hmax оно на 1 больше
+		int k = 0; // для поочередного вывода, при hmax оно на 1 больше
 		// проверка, если это последний уровень, то сначала пробел не надо
-		if (h + 1== hmax) {
+		if (h + 1 == hmax) {
 			lengthOfOneSpace = 4;
 			k = 1;
 			if (find(iForPrintItem) != nullptr) cout << find(iForPrintItem)->getData();
 			else cout << "##";
 			iForPrintItem = iForPrintItem + 1;
-		}
+		} 
 		//поочередный вывод пробелов и чисел
-		for (int k = 0; k < aReply; k++) {
+		for (k; k < aReply; k++) {
 			// вывод пробела нужной длины
 			for (int l = 0; l < lengthOfOneSpace; l++) {
 				cout << " ";
@@ -184,7 +234,7 @@ void Tree<T>::watch()
 			iForPrintItem = iForPrintItem + 1;
 		}
 		aReply = aReply * 2;
-		cout << "\n";
+		cout << "\n\n";
 	}
 }
 
