@@ -16,14 +16,6 @@ Tree<T>::~Tree()
 }
 
 template<typename T>
-void Tree<T>::setroot(T data)
-{
-	clear();
-	Node<T>* current = new Node<T>(data);
-	root = current;
-}
-
-template<typename T>
 void Tree<T>::insert(T data)
 {
 	Node<T>* temp = new Node<T>(data);
@@ -54,43 +46,6 @@ void Tree<T>::insert(T data)
 	else prev->setLeft(temp);
 }
 
-template<typename T>
-void Tree<T>::deleteItem(Node<T>* temp)
-{
-	Node<T>* parent = temp->getParent(); // саздание переменной, которая будет родителем удаляемого елемента
-	if (temp->getLeft() == nullptr) { //работает, когда елемент является листком
-		if (temp->getRight() != nullptr) { // работает, когда у удаляемого елемента есть только правый наследник
-			parent->setRight(temp->getRight());
-			temp->getRight()->setParent(parent);
-		}
-		delete temp;
-		return;
-	}
-	if (temp->getRight() == nullptr) { // работает, когда есть только левый наследник
-		parent->setLeft(temp->getLeft());
-		temp->getLeft()->setParent(parent);
-		delete temp;
-		return;
-	}
-	if (temp->getData() > temp->getParent()->getData()) { // if и else аналогичны для правой и левой ветки соответственно
-		parent->setRight(temp->getLeft()); 
-		temp->getLeft()->setParent(temp->getParent());
-		if (temp->getLeft()->getRight() == nullptr) { // замена недостающего наследника правой подветкой
-			temp->getLeft()->setRight(temp->getRight());
-		}
-		else temp->getLeft()->getRight()->setRight(temp->getRight()); // происходит сдвиг правой подветки на 1 ниже
-	}
-	else {
-		parent->setLeft(temp->getRight());
-		temp->getRight()->setParent(temp->getParent());
-		if (temp->getRight()->getLeft() == nullptr) { // замена недостающего наследника левой подветкой
-			temp->getRight()->setLeft(temp->getLeft());
-		}
-		else temp->getRight()->getLeft()->setLeft(temp->getLeft()); // происходит сдвиг левой подветки на 1 ниже
-	}
-	delete temp;
-	return;
-}
 
 template<typename T>
 void Tree<T>::clear()
@@ -108,13 +63,6 @@ void Tree<T>::clearItem(Node<T>* temp)
 		clearItem(temp->getLeft());
 		delete temp;
 	}
-}
-
-template<typename T>
-void Tree<T>::clearitemByIndex(int index)
-{
-	Node<T>* temp = find(index);
-	clearItem(temp);
 }
 
 /*
@@ -154,33 +102,126 @@ Node<T>* Tree<T>::find(Node<T>* current, int index)
 }*/
 
 template<typename T>
-Node<T>* Tree<T>::find(int index)
+void Tree<T>::deleteItem(int data)
 {
-	Node<T> * current = root;
-	return find(current, index);
+	Node<T>* temp = find(data);
+	deleteItem(temp);
 }
 
 template<typename T>
-Node<T>* Tree<T>::find(Node<T>* current, int index)
+void Tree<T>::deleteItem(Node<T>* temp)
 {
-	
+	if (temp->getRight() == nullptr && temp->getLeft() == nullptr) {
+		if (temp->getParent()->getLeft() == temp) temp->getParent()->setLeft(nullptr);
+		else temp->getParent()->setRight(nullptr);
+		delete temp;
+		setCounts();
+		return;
+	}
+	if (temp->getRight() == nullptr) {
+		deleteWithLeft(temp);
+		return;
+	}
+	if (temp->getLeft() == nullptr) {
+		deleteWithRight(temp);
+		return;
+	}
+	deleteWithTwo(temp);
+	return;
+}
+
+
+template<typename T>
+void Tree<T>::deleteWithRight(Node<T>* temp)
+{
+	Node<T>* parent = temp->getParent();
+	parent->setRight(temp->getRight());
+	temp->getRight()->setParent(parent);
+	delete temp;
+	setCounts();
+	return;
+}
+
+template<typename T>
+void Tree<T>::deleteWithLeft(Node<T>* temp)
+{
+	Node<T>* parent = temp->getParent();
+	parent->setLeft(temp->getLeft());
+	temp->getLeft()->setParent(parent);
+	delete temp;
+	setCounts();
+	return;
+}
+
+template<typename T>
+void Tree<T>::deleteWithTwo(Node<T>* temp)
+{
+	Node<T>* parent = temp->getParent();
+	int i = temp->getData() - 1;
+	// find(i) - item, that closest to the value of temp on the left
+	while (find(i) == nullptr) {
+		i--;
+	}
+
+	Node<T>* exchange = find(i); // item, that replace with temp
+	// set relationship for item near exchange
+	if (exchange->getLeft() != nullptr) {
+		exchange->getParent()->setRight(exchange->getLeft());
+		exchange->getLeft()->setParent(exchange->getParent());
+	}
+	else exchange->getParent()->setRight(nullptr);
+
+
+	exchange->setRight(temp->getRight());
+	exchange->setLeft(temp->getLeft());
+	exchange->setParent(parent);
+
+	if (parent->getRight() == temp) parent->setRight(exchange);
+	else parent->setLeft(exchange);
+	exchange->getRight()->setParent(exchange);
+	exchange->getLeft()->setParent(exchange);
+
+	delete temp;
+	setCounts();
+	return;
+}
+
+template<typename T>
+Node<T>* Tree<T>::find(int data)
+{
+	Node<T> * current = root;
+	return find(current, data);
+}
+
+template<typename T>
+Node<T>* Tree<T>::find(Node<T>* current, int data)
+{
+	if (current == nullptr) return nullptr;
+	if (current->getData() == data) return current;
+	Node<T>* next;
+	if (current->getData() <= data)  next = this->find(current->getRight(), data);
+	else  next = this->find(current->getLeft(), data);
+	if (next != nullptr) return next;
+	return nullptr;
+}
+
+template<typename T>
+Node<T>* Tree<T>::findByIndex(int index)
+{
+	Node<T> * current = root;
+	return findByIndex(current, index);
+}
+
+template<typename T>
+Node<T>* Tree<T>::findByIndex(Node<T>* current, int index)
+{
 	if (current == nullptr) return nullptr;
 	if (current->getCount() == index) return current;
-	Node<T> *inLeft = this->find(current->getLeft(), index);
-	Node<T> *inRight = this->find(current->getRight(), index);
+	Node<T> *inLeft = this->findByIndex(current->getLeft(), index);
+	Node<T> *inRight = this->findByIndex(current->getRight(), index);
 	if (inLeft != nullptr) return inLeft;
 	if (inRight != nullptr) return inRight;
 	return nullptr;
-	//throw std::exception("Wrong index");
-	/*if (current != nullptr)
-	{
-		if (current->getCount() == index) {
-			return current;
-		}
-		return find(current->getRight(), index) 
-			find(current->getLeft(), index);
-	}*/
-	
 }
 
 template<typename T>
@@ -219,7 +260,7 @@ void Tree<T>::watch()
 		if (h + 1 == hmax) {
 			lengthOfOneSpace = 4;
 			k = 1;
-			if (find(iForPrintItem) != nullptr) cout << find(iForPrintItem)->getData();
+			if (findByIndex(iForPrintItem) != nullptr) cout << findByIndex(iForPrintItem)->getData();
 			else cout << "##";
 			iForPrintItem = iForPrintItem + 1;
 		} 
@@ -229,7 +270,7 @@ void Tree<T>::watch()
 			for (int l = 0; l < lengthOfOneSpace; l++) {
 				cout << " ";
 			}
-			if(find(iForPrintItem) != nullptr) cout << find(iForPrintItem)->getData();
+			if(findByIndex(iForPrintItem) != nullptr) cout << findByIndex(iForPrintItem)->getData();
 			else cout << "##";
 			iForPrintItem = iForPrintItem + 1;
 		}
@@ -262,8 +303,6 @@ int Tree<T>::FindWay(T d)
 	return H;
 }
 
-
-
 template<typename T>
 int Tree<T>::height()
 {
@@ -271,7 +310,6 @@ int Tree<T>::height()
 		cout << "sorry, but Tree is empty" << endl;
 		return 0;
 	}
-	Node<T>* current = root;
 	heighththt = 1; // standart height is 1
 	height(root, 1);
 	return heighththt;
@@ -298,3 +336,38 @@ void Tree<T>::height(Node<T>* current, int singleheight)
 	}
 	return;
 }
+
+template<typename T>
+void Tree<T>::setCounts()
+{
+	if (root == nullptr) {
+		return;
+	}
+	int count = 0;
+	setCounts(root, count);
+	return;
+}
+
+template<typename T>
+void Tree<T>::setCounts(Node<T>* current, int count)
+{
+	current->setCount(count);
+	if (current->getLeft() != nullptr) {
+		int countForLeft = count * 2 + 1;
+		setCounts(current->getLeft(), countForLeft);
+	}
+	if (current->getRight() != nullptr) {
+		int countForRight = count * 2 + 2;
+		setCounts(current->getRight(), countForRight);
+	}
+	return;
+}
+
+template<typename T>
+void Tree<T>::printCount(int data)
+{
+	setCounts();
+	Node<T> * current = find(data);
+	cout << current->getCount();
+}
+

@@ -11,16 +11,14 @@ public:
 	Tree();
 	~Tree();
 	void insert(T data);
-	//delete item
-	void deleteItem(Node<T>* temp);
 	// delete tree
 	void clear();
-	// delete item and dependet by index
-	void clearitemByIndex(int index);
-	// delete old items and set new root
-	void setroot(T data);
+	//
+	void deleteItem(int data);
+	// find item by data
+	Node<T>* find(int data);
 	// find item by index
-	Node<T>* find(int index);
+	Node<T>* findByIndex(int index);
 	// find item and print it
 	T findToPrint(int index);
 	void watch();
@@ -28,13 +26,24 @@ public:
 	int FindWay(T d);
 	// return height of tree
 	int height();
+	void printCount(int data);
 private:
-	// delete item and dependet
+	// auxiliary(helper) for clear
 	void clearItem(Node<T> *temp);
-	// auxiliary(helper) for find↑
-	Node<T>* find(Node<T> *current, int index);
+	//delete item
+	void deleteItem(Node<T>* temp);
+	// auxiliary(helper) for find
+	Node<T>* findByIndex(Node<T> *current, int index);
 	Node<T> *root;
-	// auxiliary(helper) for height↑
+	// auxiliary(helper) for height
 	void height(Node<T>* current, int singleheight);
+	// reset all counts in tree
+	void setCounts();
+	void setCounts(Node<T>* current, int count);
+	Node<T>* find(Node<T>* current, int data);
+	// helpers for delete
+	void deleteWithRight(Node<T>* temp);
+	void deleteWithLeft(Node<T>* temp);
+	void deleteWithTwo(Node<T>* temp);
 };
 #endif
