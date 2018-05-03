@@ -10,10 +10,11 @@ class Tree {
 public:
 	Tree();
 	~Tree();
+	Node<T> * getRoot();
 	void insert(T data);
 	// delete tree
 	void clear();
-	//
+	// have 3 helpers for different situations
 	void deleteItem(int data);
 	// find item by data
 	Node<T>* find(int data);
@@ -27,6 +28,21 @@ public:
 	// return height of tree
 	int height();
 	void printCount(int data);
+	//======================================================
+	// for problems
+	void first(int N, Node<T>* current);
+	void second(Node<T>* current);
+	void third(int N);
+	void fourth(int N);
+	void fifth();
+	void sixth();
+	void seventh();
+	void eighth(int X, int Y);
+	void ninth(int N);
+	void tenth(int N);
+	void eleventh(int X, int Y);
+	void twelfth();
+	//======================================================
 private:
 	// auxiliary(helper) for clear
 	void clearItem(Node<T> *temp);

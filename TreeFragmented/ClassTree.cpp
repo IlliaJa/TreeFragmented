@@ -16,6 +16,12 @@ Tree<T>::~Tree()
 }
 
 template<typename T>
+Node<T>* Tree<T>::getRoot()
+{
+	return root;
+}
+
+template<typename T>
 void Tree<T>::insert(T data)
 {
 	Node<T>* temp = new Node<T>(data);
@@ -130,7 +136,7 @@ void Tree<T>::deleteItem(Node<T>* temp)
 	return;
 }
 
-
+// item have only right link 
 template<typename T>
 void Tree<T>::deleteWithRight(Node<T>* temp)
 {
@@ -142,6 +148,7 @@ void Tree<T>::deleteWithRight(Node<T>* temp)
 	return;
 }
 
+// item have only left link 
 template<typename T>
 void Tree<T>::deleteWithLeft(Node<T>* temp)
 {
@@ -153,33 +160,39 @@ void Tree<T>::deleteWithLeft(Node<T>* temp)
 	return;
 }
 
+// item have left and right link 
 template<typename T>
 void Tree<T>::deleteWithTwo(Node<T>* temp)
 {
 	Node<T>* parent = temp->getParent();
 	int i = temp->getData() - 1;
-	// find(i) - item, that closest to the value of temp on the left
+	// find(i) - item, that closest to the value of temp on the left and replace with temp
 	while (find(i) == nullptr) {
 		i--;
 	}
+	Node<T>* exchange = find(i);
+	if(parent == nullptr) root = exchange;
 
-	Node<T>* exchange = find(i); // item, that replace with temp
-	// set relationship for item near exchange
-	if (exchange->getLeft() != nullptr) {
-		exchange->getParent()->setRight(exchange->getLeft());
-		exchange->getLeft()->setParent(exchange->getParent());
-	}
-	else exchange->getParent()->setRight(nullptr);
-
-
+	Node<T>* exchangeLeft = exchange->getLeft();
+	Node<T>* exchangeRight = exchange->getRight();
+	Node<T>* exchangeParent = exchange->getParent();
+	// set links of exchange
 	exchange->setRight(temp->getRight());
-	exchange->setLeft(temp->getLeft());
+	if (temp->getLeft() != exchange) exchange->setLeft(temp->getLeft());
 	exchange->setParent(parent);
+	// set links to exchange
+	if (parent != nullptr) {
+		if (parent->getRight() == temp) parent->setRight(exchange);
+		else parent->setLeft(exchange);
+	}
+	if(temp->getLeft() != exchange) temp->getLeft()->setParent(exchange);
+	else temp->setLeft(nullptr);
+	temp->getRight()->setParent(exchange);
 
-	if (parent->getRight() == temp) parent->setRight(exchange);
-	else parent->setLeft(exchange);
-	exchange->getRight()->setParent(exchange);
-	exchange->getLeft()->setParent(exchange);
+	// set relationship for item near exchange (in first place)
+	if(exchangeLeft != nullptr) exchangeLeft->setParent(exchangeParent);
+	if(exchangeParent != nullptr) exchangeParent->setRight(exchangeLeft);
+	if (exchangeRight != nullptr) exchangeRight->setParent(exchangeLeft);
 
 	delete temp;
 	setCounts();
@@ -371,3 +384,70 @@ void Tree<T>::printCount(int data)
 	cout << current->getCount();
 }
 
+//===========================================================================
+// for problems
+
+template<typename T>
+void Tree<T>::first(int N, Node<T>* current)
+{
+	if (current == nullptr) return;
+	this->first(N, current->getLeft());
+	this->first(N, current->getRight());
+	if ((current->getData() % N) == 0) deleteItem(current->getData());
+	return;
+}
+
+template<typename T>
+void Tree<T>::second(Node<T>* current)
+{
+}
+
+template<typename T>
+void Tree<T>::third(int N)
+{
+}
+
+template<typename T>
+void Tree<T>::fourth(int N)
+{
+}
+
+template<typename T>
+void Tree<T>::fifth()
+{
+}
+
+template<typename T>
+void Tree<T>::sixth()
+{
+}
+
+template<typename T>
+void Tree<T>::seventh()
+{
+}
+
+template<typename T>
+void Tree<T>::eighth(int X, int Y)
+{
+}
+
+template<typename T>
+void Tree<T>::ninth(int N)
+{
+}
+
+template<typename T>
+void Tree<T>::tenth(int N)
+{
+}
+
+template<typename T>
+void Tree<T>::eleventh(int X, int Y)
+{
+}
+
+template<typename T>
+void Tree<T>::twelfth()
+{
+}
