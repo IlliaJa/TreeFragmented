@@ -21,9 +21,6 @@
     <ClInclude Include="ClassNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="catch.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ClassTree.cpp">
@@ -31,9 +28,6 @@
     </ClCompile>
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ClassTreeDeleteFunc.cpp">
-      <Filter>Resource Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

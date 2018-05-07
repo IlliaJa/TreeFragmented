@@ -108,10 +108,11 @@ Node<T>* Tree<T>::find(Node<T>* current, int index)
 }*/
 
 template<typename T>
-void Tree<T>::deleteItem(int data)
+void Tree<T>::deleteItem(T data)
 {
 	Node<T>* temp = find(data);
 	deleteItem(temp);
+	if (find(data) != nullptr) deleteItem(data);
 }
 
 template<typename T>
@@ -133,7 +134,6 @@ void Tree<T>::deleteItem(Node<T>* temp)
 		return;
 	}
 	deleteWithTwo(temp);
-	return;
 }
 
 // item have only right link 
@@ -153,7 +153,8 @@ template<typename T>
 void Tree<T>::deleteWithLeft(Node<T>* temp)
 {
 	Node<T>* parent = temp->getParent();
-	parent->setLeft(temp->getLeft());
+	if (parent->getRight() == temp) parent->setRight(temp->getLeft());
+	else parent->setLeft(temp->getLeft());
 	temp->getLeft()->setParent(parent);
 	delete temp;
 	setCounts();
@@ -200,14 +201,14 @@ void Tree<T>::deleteWithTwo(Node<T>* temp)
 }
 
 template<typename T>
-Node<T>* Tree<T>::find(int data)
+Node<T>* Tree<T>::find(T data)
 {
 	Node<T> * current = root;
 	return find(current, data);
 }
 
 template<typename T>
-Node<T>* Tree<T>::find(Node<T>* current, int data)
+Node<T>* Tree<T>::find(Node<T>* current, T data)
 {
 	if (current == nullptr) return nullptr;
 	if (current->getData() == data) return current;
@@ -377,7 +378,7 @@ void Tree<T>::setCounts(Node<T>* current, int count)
 }
 
 template<typename T>
-void Tree<T>::printCount(int data)
+void Tree<T>::printCount(T data)
 {
 	setCounts();
 	Node<T> * current = find(data);
@@ -386,68 +387,84 @@ void Tree<T>::printCount(int data)
 
 //===========================================================================
 // for problems
-
+// простите за второй парамент, но я не хотел разделять на 2 функции
 template<typename T>
 void Tree<T>::first(int N, Node<T>* current)
 {
-	if (current == nullptr) return;
-	this->first(N, current->getLeft());
-	this->first(N, current->getRight());
-	if ((current->getData() % N) == 0) deleteItem(current->getData());
+	if (current == nullptr) return; // функция не олжна работать с нулевой ссылкой
+	this->first(N, current->getLeft()); // рекурсивный запуск функции с тем же N, но с левым елементом
+	this->first(N, current->getRight());// рекурсивный запуск функции с тем же N, но с правым елементом
+	if ((current->getData() % N) == 0) deleteItem(current->getData()); // удаление елемента, если он подходит под условие
 	return;
 }
 
 template<typename T>
 void Tree<T>::second(Node<T>* current)
 {
+	// полная аналогия с 1, только мы не передаем N, а просто смотрим остачу от деления на 2
+	if (current == nullptr) return; 
+	this->second(current->getLeft()); 
+	this->second(current->getRight());
+	if ((current->getData() % 2) != 0) deleteItem(current->getData()); 
+	return;
 }
 
 template<typename T>
-void Tree<T>::third(int N)
+void Tree<T>::third(int N, Node<T>* current)
+{
+	if (current == nullptr) return;
+	this->third(N, current->getLeft());
+	this->third(N, current->getRight());
+	if (current->getData() > N) deleteItem(current->getData());
+	return;
+}
+
+template<typename T>
+void Tree<T>::fourth(int N, Node<T>* current)
+{
+	if (current == nullptr) return;
+	this->fourth(N, current->getLeft());
+	this->fourth(N, current->getRight());
+	if (current->getData() < N) deleteItem(current->getData());
+	return;
+}
+
+template<typename T>
+void Tree<T>::fifth(Node<T>* current)
 {
 }
 
 template<typename T>
-void Tree<T>::fourth(int N)
+void Tree<T>::sixth(Node<T>* current)
 {
 }
 
 template<typename T>
-void Tree<T>::fifth()
+void Tree<T>::seventh(Node<T>* current)
 {
 }
 
 template<typename T>
-void Tree<T>::sixth()
+void Tree<T>::eighth(int X, int Y, Node<T>* current)
 {
 }
 
 template<typename T>
-void Tree<T>::seventh()
+void Tree<T>::ninth(int N, Node<T>* current)
 {
 }
 
 template<typename T>
-void Tree<T>::eighth(int X, int Y)
+void Tree<T>::tenth(int N, Node<T>* current)
 {
 }
 
 template<typename T>
-void Tree<T>::ninth(int N)
+void Tree<T>::eleventh(int X, int Y, Node<T>* current)
 {
 }
 
 template<typename T>
-void Tree<T>::tenth(int N)
-{
-}
-
-template<typename T>
-void Tree<T>::eleventh(int X, int Y)
-{
-}
-
-template<typename T>
-void Tree<T>::twelfth()
+void Tree<T>::twelfth(Node<T>* current)
 {
 }

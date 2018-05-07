@@ -1,13 +1,11 @@
 #include "ClassTree.cpp"
 #include <iostream>
-#define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
-#include "catch.h"
 
 using namespace std;
 
 int heighththt = 0;
 
-int main() {
+/*int main() {
 	Tree<int> tree;
 
 	tree.insert(50);
@@ -39,28 +37,36 @@ int main() {
 	cout << "x";
 
 	system("pause");
-}
+}*/
 
 // main for problems
-/*int main() {
+int main() {
 	Tree<int> tree;
-	for (int i = 0; i < 5; i++) {
+	/*for (int i = 0; i < 5; i++) {
 		int r = rand() % 99;
 		tree.insert(r);
 
-	}
+	}*/
 	tree.insert(10);
 	tree.insert(8);
-	tree.insert(12);
+	tree.insert(15);
+	tree.insert(15);
+	//tree.insert(25);
+	//tree.insert(30);
 	/*int r;
 	for (int i = 0; i < 15; i++)
 	{
 		cin >> r;
 		tree.insert(r);
-	} 
+	} */
+	//tree.watch();
+	//tree.first(5, tree.getRoot());
+	//tree.second(tree.getRoot());
+	//tree.third(9, tree.getRoot());
+	//tree.fourth(20, tree.getRoot());
+	//tree.deleteItem(10);
 	tree.watch();
-	tree.first(5, tree.getRoot());
-	cout << "x";
+	tree.deleteItem(15);
 	tree.watch();
 	system("pause");
-} */
+} 
