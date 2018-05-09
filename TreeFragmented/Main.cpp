@@ -8,11 +8,11 @@ int heighththt = 0;
 int main() {
 	Tree<int> tree;
 	// random elements in tree
-	/*for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < 15; i++) {
 		int r = rand() % 99;
 		tree.insert(r);
 
-	}*/
+	}
 	tree.watch();
 
 	// input elements
