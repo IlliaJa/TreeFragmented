@@ -42,31 +42,30 @@ int heighththt = 0;
 // main for problems
 int main() {
 	Tree<int> tree;
+	// random elements in tree
 	/*for (int i = 0; i < 5; i++) {
 		int r = rand() % 99;
 		tree.insert(r);
 
 	}*/
-	tree.insert(10);
-	tree.insert(8);
-	tree.insert(15);
-	tree.insert(15);
-	//tree.insert(25);
-	//tree.insert(30);
+	tree.watch();
+
+	// input elements
 	/*int r;
 	for (int i = 0; i < 15; i++)
 	{
 		cin >> r;
 		tree.insert(r);
 	} */
-	//tree.watch();
-	//tree.first(5, tree.getRoot());
+	tree.first(5, tree.getRoot());
 	//tree.second(tree.getRoot());
-	//tree.third(9, tree.getRoot());
-	//tree.fourth(20, tree.getRoot());
-	//tree.deleteItem(10);
-	tree.watch();
-	tree.deleteItem(15);
+	//tree.third(90, tree.getRoot());
+	//tree.fourth(130, tree.getRoot());
+	//tree.fifth(3, 8, 10, 16);
+	//tree.sixth(tree.getRoot());
+	//tree.seventh(tree.getRoot());
+	//tree.eighth(5, 20, tree.getRoot());
+	//tree.ninth(1, tree.getRoot());
 	tree.watch();
 	system("pause");
 } 

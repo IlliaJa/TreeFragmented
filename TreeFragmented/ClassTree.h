@@ -14,8 +14,10 @@ public:
 	void insert(T data);
 	// delete tree
 	void clear();
-	// have 3 helpers for different situations
+	// delete item, that doesnt have similar
 	void deleteItem(T data);
+	// corectly delete, but not comfortable
+	void deleteItem(Node<T>* temp);
 	// find item by data
 	Node<T>* find(T data);
 	// find item by index
@@ -34,7 +36,8 @@ public:
 	void second(Node<T>* current);
 	void third(int N, Node<T>* current);
 	void fourth(int N, Node<T>* current);
-	void fifth(Node<T>* current);
+	// num- number of arguments;    delete item, that doesnt have similar
+	void fifth(int num, ...);
 	void sixth(Node<T>* current);
 	void seventh(Node<T>* current);
 	void eighth(int X, int Y, Node<T>* current);
@@ -46,8 +49,6 @@ public:
 private:
 	// auxiliary(helper) for clear
 	void clearItem(Node<T> *temp);
-	//delete item
-	void deleteItem(Node<T>* temp);
 	// auxiliary(helper) for find
 	Node<T>* findByIndex(Node<T> *current, int index);
 	Node<T> *root;
@@ -57,9 +58,7 @@ private:
 	void setCounts();
 	void setCounts(Node<T>* current, int count);
 	Node<T>* find(Node<T>* current, T data);
-	// helpers for delete
-	void deleteWithRight(Node<T>* temp);
-	void deleteWithLeft(Node<T>* temp);
+	// helper for delete
 	void deleteWithTwo(Node<T>* temp);
 };
 #endif

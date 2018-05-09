@@ -1,6 +1,9 @@
 #include "ClassTree.h"
 #include "ClassNode.h"
+#include <stdarg.h>
 #include <iostream>
+#include <cstdlib>
+#include <vector>
 
 
 template<typename T>
@@ -119,46 +122,33 @@ template<typename T>
 void Tree<T>::deleteItem(Node<T>* temp)
 {
 	if (temp->getRight() == nullptr && temp->getLeft() == nullptr) {
-		if (temp->getParent()->getLeft() == temp) temp->getParent()->setLeft(nullptr);
-		else temp->getParent()->setRight(nullptr);
+		if (temp->getParent() != nullptr) {
+			if (temp->getParent()->getLeft() == temp) temp->getParent()->setLeft(nullptr);
+			else temp->getParent()->setRight(nullptr);
+		}
+		else root = nullptr;
 		delete temp;
 		setCounts();
 		return;
 	}
-	if (temp->getRight() == nullptr) {
-		deleteWithLeft(temp);
+
+	if (temp->getRight() != nullptr && temp->getLeft() != nullptr) {
+		deleteWithTwo(temp);
 		return;
 	}
-	if (temp->getLeft() == nullptr) {
-		deleteWithRight(temp);
-		return;
+
+	Node<T>* parent = temp->getParent();
+	Node<T> *legacy;
+	if (temp->getRight() == nullptr) legacy = temp->getLeft();
+	else legacy = temp->getRight();
+	legacy->setParent(parent);
+	if (parent != nullptr) {
+		if (parent->getRight() == temp) parent->setRight(legacy);
+		else parent->setLeft(legacy);
 	}
-	deleteWithTwo(temp);
-}
-
-// item have only right link 
-template<typename T>
-void Tree<T>::deleteWithRight(Node<T>* temp)
-{
-	Node<T>* parent = temp->getParent();
-	parent->setRight(temp->getRight());
-	temp->getRight()->setParent(parent);
+	else root = legacy;
 	delete temp;
 	setCounts();
-	return;
-}
-
-// item have only left link 
-template<typename T>
-void Tree<T>::deleteWithLeft(Node<T>* temp)
-{
-	Node<T>* parent = temp->getParent();
-	if (parent->getRight() == temp) parent->setRight(temp->getLeft());
-	else parent->setLeft(temp->getLeft());
-	temp->getLeft()->setParent(parent);
-	delete temp;
-	setCounts();
-	return;
 }
 
 // item have left and right link 
@@ -171,7 +161,9 @@ void Tree<T>::deleteWithTwo(Node<T>* temp)
 	while (find(i) == nullptr) {
 		i--;
 	}
-	Node<T>* exchange = find(i);
+	Node<T>* exchange;
+	if(temp->getData() != temp->getLeft()->getData()) exchange = find(i);
+	else exchange = temp->getLeft(); // if deleting item have similar
 	if(parent == nullptr) root = exchange;
 
 	Node<T>* exchangeLeft = exchange->getLeft();
@@ -394,7 +386,7 @@ void Tree<T>::first(int N, Node<T>* current)
 	if (current == nullptr) return; // функция не олжна работать с нулевой ссылкой
 	this->first(N, current->getLeft()); // рекурсивный запуск функции с тем же N, но с левым елементом
 	this->first(N, current->getRight());// рекурсивный запуск функции с тем же N, но с правым елементом
-	if ((current->getData() % N) == 0) deleteItem(current->getData()); // удаление елемента, если он подходит под условие
+	if ((current->getData() % N) == 0) deleteItem(current); // удаление елемента, если он подходит под условие
 	return;
 }
 
@@ -405,7 +397,7 @@ void Tree<T>::second(Node<T>* current)
 	if (current == nullptr) return; 
 	this->second(current->getLeft()); 
 	this->second(current->getRight());
-	if ((current->getData() % 2) != 0) deleteItem(current->getData()); 
+	if ((current->getData() % 2) != 0) deleteItem(current); 
 	return;
 }
 
@@ -415,7 +407,7 @@ void Tree<T>::third(int N, Node<T>* current)
 	if (current == nullptr) return;
 	this->third(N, current->getLeft());
 	this->third(N, current->getRight());
-	if (current->getData() > N) deleteItem(current->getData());
+	if (current->getData() > N) deleteItem(current);
 	return;
 }
 
@@ -425,38 +417,81 @@ void Tree<T>::fourth(int N, Node<T>* current)
 	if (current == nullptr) return;
 	this->fourth(N, current->getLeft());
 	this->fourth(N, current->getRight());
-	if (current->getData() < N) deleteItem(current->getData());
+	if (current->getData() < N) deleteItem(current);
 	return;
 }
 
 template<typename T>
-void Tree<T>::fifth(Node<T>* current)
+void Tree<T>::fifth(int num, ...)
 {
+	va_list args;
+	va_start(args, num);
+	while (num--) {
+		deleteItem(va_arg(args, T));
+	}
+	va_end(args);
 }
 
 template<typename T>
 void Tree<T>::sixth(Node<T>* current)
 {
+	if (current == nullptr) return;
+	this->sixth(current->getLeft());
+	this->sixth(current->getRight());
+	bool flag = false;
+	for (int i = 2; i < current->getData() - 1; i++) {
+		if (current->getData() % i == 0) flag = true;
+	}
+	if (flag) deleteItem(current);
+	return;
 }
 
 template<typename T>
 void Tree<T>::seventh(Node<T>* current)
 {
+	if (current == nullptr) return;
+	this->seventh(current->getLeft());
+	this->seventh(current->getRight());
+	bool flag = false;
+	int i = 2;
+	for (i; i < current->getData() - 1; i++) {
+		if (current->getData() % i == 0) flag = true;
+	}
+	if (!flag) deleteItem(current);
+	return;
 }
 
 template<typename T>
 void Tree<T>::eighth(int X, int Y, Node<T>* current)
 {
+	if (current == nullptr) return;
+	this->eighth(X, Y, current->getLeft());
+	this->eighth(X, Y, current->getRight());
+	if (current->getData() < Y && current->getData() > X) deleteItem(current);
+	return;
 }
 
 template<typename T>
 void Tree<T>::ninth(int N, Node<T>* current)
 {
+	if (current == nullptr) return;
+	this->ninth(N, current->getLeft());
+	this->ninth(N, current->getRight());
+	char strings[3] = " ";
+	itoa(current->getData(), strings, 10);
+	for (int i = 0; i < 3; i++)
+	{
+		cout << strings[i] << endl;
+	}
+	//if (string[1] == " ") deleteItem(current);
+	//char *intStr = itoa(current->getData(), intStr, 10);
+	return;
 }
 
 template<typename T>
 void Tree<T>::tenth(int N, Node<T>* current)
 {
+
 }
 
 template<typename T>
